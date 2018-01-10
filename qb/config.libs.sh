@@ -46,15 +46,8 @@ add_define MAKEFILE DYLIB_LIB "$DYLIB"
 check_lib '' SYSTEMD -lsystemd sd_get_machine_names
 
 if [ "$HAVE_VIDEOCORE" != "no" ]; then
-   check_pkgconf VC_TEST bcm_host
-
-   # use fallback if pkgconfig is not available
-   if [ -z "$VC_TEST_LIBS" ]; then
       [ -d /opt/vc/lib ] && add_dirs LIBRARY /opt/vc/lib /opt/vc/lib/GL
-      check_lib '' VIDEOCORE -lbcm_host bcm_host_init "-lvcos -lvchiq_arm"
-   else
-      HAVE_VIDEOCORE="$HAVE_VC_TEST"
-   fi
+      check_lib '' VIDEOCORE -lbcm_host bcm_host_init "-lvcos -lvchiq_arm -lmmal"
 fi
 
 if [ "$HAVE_VIDEOCORE" = 'yes' ]; then
@@ -62,13 +55,10 @@ if [ "$HAVE_VIDEOCORE" = 'yes' ]; then
    VC_PREFIX='brcm'
    INCLUDES="${INCLUDES} opt/vc/include"
 
-   # use fallback if pkgconfig is not available
-   if [ -z "$VC_TEST_LIBS" ]; then
       [ -d /opt/vc/include ] && add_dirs INCLUDE /opt/vc/include
       [ -d /opt/vc/include/interface/vcos/pthreads ] && add_dirs INCLUDE /opt/vc/include/interface/vcos/pthreads
       [ -d /opt/vc/include/interface/vmcs_host/linux ] && add_dirs INCLUDE /opt/vc/include/interface/vmcs_host/linux
-      EXTRA_GL_LIBS="-lbrcmEGL -lbrcmGLESv2 -lbcm_host -lvcos -lvchiq_arm"
-   fi
+      EXTRA_GL_LIBS="-lbrcmEGL -lbrcmGLESv2 -lbcm_host -lvcos -lvchiq_arm -lmmal"
 fi
 
 if [ "$HAVE_NEON" = "yes" ]; then
